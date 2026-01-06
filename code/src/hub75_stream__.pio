@@ -1,0 +1,13 @@
+.program hub75_stream
+.side_set 1 opt        ; 1bit side-set: 用來當 CLK（0=低, 1=高）
+
+; 假設：
+; - OUT 方向 pins = 6 個 data pins（R1,G1,B1,R2,G2,B2）
+; - side-set pin = CLK
+; - 每次 OUT 6 bits，對應一個像素的 6 個 color bit
+
+.wrap_target
+pull      block   side 0      ; 等待下一個 32-bit word 進入 OSR（DMA 會餵）
+out       pins, 6 side 0      ; 輸出 6bit 到 data pins，CLK 維持 low
+nop              side 1 [1]   ; CLK 拉高（產生 rising edge），delay[1] 可微調高脈寬
+.wrap
